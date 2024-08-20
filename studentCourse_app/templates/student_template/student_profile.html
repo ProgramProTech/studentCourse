@@ -1,0 +1,222 @@
+{% extends 'student_template/base_template.html' %}
+{% load static %}
+{% block page_title %}
+Edit Profile
+{% endblock page_title %}
+
+{% block main_content %}
+<section class="content">
+  <div class="container-fluid p-0">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card-primary">
+          <div class="card-header">
+            <h2 class="card-title text-center">Edit Profile</h2>
+          </div>
+          <form role="form" method="post" enctype="multipart/form-data">
+            <div class="card-body">
+              <div class="form-group">
+                <label>Username</label>
+                <input type="text" class="form-control" name="username" value="{{ user.username }}" disabled="disabled">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="text" class="form-control" name="email" value="{{ user.email }}" disabled="disabled">
+              </div>
+              <div class="form-group">
+                <label>First Name</label>
+                <input type="text" class="form-control" name="first_name" value="{{ user.first_name }}">
+              </div>
+              <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" class="form-control" name="last_name" value="{{ user.last_name }}">
+              </div>
+              <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" class="form-control" name="date_of_birth" id="date_of_birth" value="{% if student.date_of_birth %}{{ student.date_of_birth|date:'Y-m-d' }}{% endif %}">
+              </div>
+              <div class="form-group">
+                <label for="country">Country</label>
+                <select name="country" id="countrySelect" class="form-control">
+                    <option value="">Select Country</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="city">City</label>
+                <select name="city" id="citySelect" class="form-control">
+                    <option value="">Select City</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Gender</label>
+                <select name="gender" class="form-control">
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+              <div class="form-group">
+                <label>Address</label>
+                <input type="text" class="form-control" name="address" value="{{ student.address }}">
+              </div>
+              <div class="form-group">
+                <label>Change Password?</label>
+                <input type="password" class="form-control" name="password" placeholder="Fill Only If You want to Change Password">
+              </div>
+              <div class="form-group">
+                <label>Profile Picture</label>
+                <input type="file" class="form-control-file" name="profile_pic">
+                <img id="profilePicPreview" src="{% if student.profile_pic %}{{ student.profile_pic }}{% else %}{% static 'img/user.png' %}{% endif %}" alt="Profile Picture" style="margin-top:10px; max-width: 200px;">
+              </div>
+              <div class="form-group">
+                {% if messages %}
+                  {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                      <div class="alert alert-danger" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                    {% if message.tags == 'success' %}
+                      <div class="alert alert-success" style="margin-top:10px">{{ message }}</div>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <button type="submit" class="btn btn-primary btn-block">Save Profile</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+  const token = localStorage.getItem('token');
+
+  const COUNTRY_CITIES = {
+    "USA": ["New York", "Los Angeles", "Chicago"],
+    "Canada": ["Toronto", "Vancouver", "Montreal"],
+    "UK": ["London", "Manchester", "Birmingham"]
+};
+
+function populateDropdowns() {
+    var $countrySelect = $('#countrySelect');
+    var $citySelect = $('#citySelect');
+    
+    // Populate country dropdown
+    $countrySelect.empty().append('<option value="">Select Country</option>');
+    $.each(Object.keys(COUNTRY_CITIES), function(index, country) {
+        $countrySelect.append($('<option></option>').val(country).text(country));
+    });
+
+    // Populate city dropdown based on the selected country
+    $countrySelect.on('change', function() {
+        var selectedCountry = $(this).val();
+        $citySelect.empty().append('<option value="">Select City</option>');
+        if (selectedCountry && COUNTRY_CITIES[selectedCountry]) {
+            var cities = COUNTRY_CITIES[selectedCountry];
+            $.each(cities, function(index, city) {
+                $citySelect.append($('<option></option>').val(city).text(city));
+            });
+        }
+    });
+}
+
+function fillFormData(data) {
+    $('input[name="username"]').val(data.username || "");
+    $('input[name="email"]').val(data.email || "");
+    $('input[name="first_name"]').val(data.first_name || "");
+    $('input[name="last_name"]').val(data.last_name || "");
+    $('input[name="date_of_birth"]').val(data.date_of_birth || "");
+    $('input[name="address"]').val(data.address || "");
+
+    var $countrySelect = $('#countrySelect');
+    var $citySelect = $('#citySelect');
+
+    // Set selected country and city
+    if (COUNTRY_CITIES[data.country]) {
+        $countrySelect.val(data.country || "").trigger('change'); // Trigger change to populate cities
+        $citySelect.val(data.city || "");
+    } else {
+        $countrySelect.val("");
+        $citySelect.empty().append('<option value="">Select City</option>');
+    }
+
+    $('select[name="gender"]').val(data.gender || "");
+
+    if (data.profile_pic) {
+        $('#profilePicPreview').attr('src', data.profile_pic).show();
+    } else {
+        $('#profilePicPreview').attr('src', '{% static "img/user.png" %}').show();
+    }
+}
+
+function fetchProfileData() {
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/profile/',
+        type: 'GET',
+        headers: {
+            'Authorization': 'Token ' + token
+        },
+        dataType: 'json',
+        success: function(response) {
+            const data = response.data;
+            fillFormData(data);
+        },
+        error: function(error) {
+            console.error('Error fetching profile data:', error);
+        }
+    });
+}
+
+function updateProfile(event) {
+    event.preventDefault();
+
+    var formData = new FormData();
+    formData.append('first_name', $('input[name="first_name"]').val());
+    formData.append('last_name', $('input[name="last_name"]').val());
+    formData.append('date_of_birth', $('input[name="date_of_birth"]').val());
+    formData.append('address', $('input[name="address"]').val());
+    formData.append('country', $('#countrySelect').val());
+    formData.append('city', $('#citySelect').val());
+    formData.append('gender', $('select[name="gender"]').val());
+
+    if ($('input[name="profile_pic"]')[0].files[0]) {
+        formData.append('profile_pic', $('input[name="profile_pic"]')[0].files[0]);
+    }
+
+    if ($('input[name="password"]').val()) {
+        formData.append('password', $('input[name="password"]').val());
+    }
+
+    $.ajax({
+        url: 'http://127.0.0.1:8000/api/profile/',
+        type: 'PUT',
+        headers: {
+            'Authorization': 'Token ' + token
+        },
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(data) {
+            alert('Profile updated successfully');
+            window.location.reload()
+        },
+        error: function(error) {
+            console.error('Error updating profile:', error);
+        }
+    });
+}
+
+$(document).ready(function() {
+    populateDropdowns();
+    fetchProfileData();
+    $('form').on('submit', updateProfile);
+});
+</script>
+{% endblock custom_js %}
+

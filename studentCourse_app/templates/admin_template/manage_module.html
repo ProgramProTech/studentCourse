@@ -1,0 +1,168 @@
+{% extends 'admin_template/base_template.html' %}
+{% load static %}
+{% block page_title %}Manage Module{% endblock page_title %}
+
+{% block main_content %}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row bg-light">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h3 class="card-title">Manage Module</h3>
+                    <div class="card-tools">
+                        <a href="{% url 'add_module' %}" class="btn btn-primary">Add New Module</a>
+                    </div>
+                </div>
+
+                <div class="card-body table-responsive p-1">
+                    <table id="moduleTable" class="table table-bordered table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Module Name</th>
+                                <th>Code</th>
+                                <th>Credit</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Availability</th>
+                                <th>Course ID</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="moduleTableBody">
+                            <!-- Rows will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main_content %}
+{% block custom_js %}
+<script>
+    $(document).ready(function() {
+        const apiBaseUrl = 'http://127.0.0.1:8000/api/admin/modules/';
+    
+        // Fetch and populate modules
+        function fetchModules() {
+            $.ajax({
+                url: apiBaseUrl,
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    let tbody = $('#moduleTableBody');
+                    tbody.empty(); // Clear existing rows
+    
+                    response.data.forEach(function(module) {
+                        let row = `
+                            <tr data-id="${module.id}">
+                                <td>${module.id}</td>
+                                <td><span class="module-name">${module.name}</span><input type="text" class="form-control module-name-input p-2" style="display:none;" value="${module.name}"></td>
+                                <td><span class="module-code">${module.code}</span><input type="text" class="form-control module-code-input p-2" style="display:none;" value="${module.code}"></td>
+                                <td><span class="module-credit">${module.credit}</span><input type="number" class="form-control module-credit-input p-2" style="display:none;" value="${module.credit}"></td>
+                                <td><span class="module-category">${module.category}</span><select class="form-control module-category-input p-2" style="display:none;">
+                                    <option value="Core" ${module.category === 'Core' ? 'selected' : ''}>Core</option>
+                                    <option value="Elective" ${module.category === 'Elective' ? 'selected' : ''}>Elective</option>
+                                </select></td>
+                                <td><span class="module-description">${module.description}</span><input type="text" class="form-control module-description-input p-2" style="display:none;" value="${module.description}"></td>
+                                <td><span class="module-availability">${module.availability ? 'Open' : 'Close'}</span><select class="form-control module-availability-input p-2" style="display:none;">
+                                    <option value="true" ${module.availability ? 'selected' : ''}>Open</option>
+                                    <option value="false" ${!module.availability ? 'selected' : ''}>Close</option>
+                                </select></td>
+                                <td><span class="module-course-id" disabled>${module.course}</span><input type="number" class="form-control module-course-id-input  p-2" disabled style="display:none;" value="${module.course}"></td>
+                                <td>
+                                    <button class="btn btn-primary btn-sm edit-module">Edit</button>
+                                    <button class="btn btn-success btn-sm save-module" style="display:none;">Save</button>
+                                    <button class="btn btn-danger btn-sm delete-module">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.append(row);
+                    });
+    
+                    // Bind events to the new buttons
+                    bindEvents();
+                },
+                error: function(xhr, status, error) {
+                    alert('Failed to fetch modules: ' + error);
+                }
+            });
+        }
+    
+        // Bind events to the buttons
+        function bindEvents() {
+            // Edit button
+            $('.edit-module').off('click').on('click', function() {
+                let row = $(this).closest('tr');
+                row.find('span').hide();
+                row.find('input, select').show();
+                row.find('.edit-module').hide();
+                row.find('.save-module').show();
+            });
+    
+            // Save button
+            $('.save-module').off('click').on('click', function() {
+                let row = $(this).closest('tr');
+                let moduleId = row.data('id');
+                let updatedModule = {
+                    name: row.find('.module-name-input').val(),
+                    code: row.find('.module-code-input').val(),
+                    credit: row.find('.module-credit-input').val(),
+                    category: row.find('.module-category-input').val(),
+                    description: row.find('.module-description-input').val(),
+                    availability: row.find('.module-availability-input').val() === 'true',
+                    course: row.find('.module-course-id-input').val()
+                };
+    
+                $.ajax({
+                    url: `${apiBaseUrl}${moduleId}`,
+                    type: 'PUT',
+                    data: JSON.stringify(updatedModule),
+                    contentType: 'application/json',
+                    success: function(response) {
+                        row.find('.module-name').text(updatedModule.name).show();
+                        row.find('.module-code').text(updatedModule.code).show();
+                        row.find('.module-credit').text(updatedModule.credit).show();
+                        row.find('.module-category').text(updatedModule.category).show();
+                        row.find('.module-description').text(updatedModule.description).show();
+                        row.find('.module-availability').text(updatedModule.availability ? 'Open' : 'Close').show();
+                        row.find('.module-course-id').text(updatedModule.course).show();
+                        row.find('input, select').hide();
+                        row.find('.edit-module').show();
+                        row.find('.save-module').hide();
+                        alert("Module Updated successfully")
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Failed to update module: ' + error);
+                    }
+                });
+            });
+    
+            // Delete button
+            $('.delete-module').off('click').on('click', function() {
+                let row = $(this).closest('tr');
+                let moduleId = row.data('id');
+    
+                if (confirm('Are you sure you want to delete this module?')) {
+                    $.ajax({
+                        url: `${apiBaseUrl}${moduleId}`,
+                        type: 'DELETE',
+                        success: function(response) {
+                            row.remove();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Failed to delete module: ' + error);
+                        }
+                    });
+                }
+            });
+        }
+    
+        // Initial fetch
+        fetchModules();
+    });
+</script>
+{% endblock custom_js %}

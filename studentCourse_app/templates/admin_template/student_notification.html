@@ -1,0 +1,142 @@
+{% extends 'admin_template/base_template.html' %}
+{% block page_title %}
+Student Notification
+{% endblock page_title %}
+{% block main_content %}
+    <div class="container-fluid pt-4 px-4 bg-light">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Students Notification</h3>
+                        <!-- Button to send notification to all students -->
+                        <button class="btn btn-primary float-right" id="notify_all_btn" data-toggle="modal" data-target="#myModal">
+                            Send Notification to All
+                        </button>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>User Name</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td>{{ student.custom_user.id }}</td>
+                                    <td>{{ student.custom_user.first_name }}</td>
+                                    <td>{{ student.custom_user.last_name }}</td>
+                                    <td>{{ student.custom_user.username }}</td>
+                                    <td>{{ student.custom_user.email }}</td>
+                                    <td>{{ student.address }}</td>
+                                    <td>
+                                        <a href="#" class="btn btn-success show_notification" data-toggle="modal" data-target="#myModal">
+                                            Send Notification
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Send Notification to <span id="name_span">selected students</span></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <textarea name="message" class="form-control" id="message_not"></textarea>
+                        <input type="hidden" name="student_id" class="form-control" id="student_id">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-info btn-block send_notification_btn mt-3" type="button">Send Notification</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default close-button" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+  $(document).ready(function() {
+    const token = localStorage.getItem('token');
+
+    $(".show_notification").click(function(){
+        $('#myModal').modal('show');
+        var student_id = $(this).closest("tr").find("td:eq(0)").text();
+        var student_name = $(this).closest("tr").find("td:eq(3)").text();
+        $("#student_id").val(student_id);
+        $("#name_span").text(student_name);
+    });
+
+    $("#notify_all_btn").click(function(){
+        $('#myModal').modal('show');
+        $("#student_id").val(''); 
+        $("#name_span").text('all students'); 
+    });
+
+    $(".close-button").click(function(){
+      $('#myModal').modal('hide');
+      $("#student_id").val(''); 
+      $("#name_span").text(''); 
+  });
+
+
+    
+
+    $(".send_notification_btn").click(function(){
+        var id = $("#student_id").val();
+        var message = $("#message_not").val();
+        sendNotification(id, message);
+        
+    });
+
+    function sendNotification(id, message){
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/notifications/',
+            type: 'POST',
+            headers: {
+                'Authorization': 'Token ' + token,
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify({
+                message: message,
+                student_ids: id ? [id] : []  // If id is empty, notify all students
+            }),
+            success: function(response){
+                alert(response.message);
+                $('#myModal').modal('hide');
+                $("#student_id").val(''); 
+                $("#name_span").text(''); 
+                $("#message_not").val(''); 
+            },
+            error: function(xhr, status, error) {
+                console.error("Error sending notification:", status, error);
+                alert("An error occurred. Please try again.");
+            }
+        });
+    }
+  });
+</script>
+{% endblock custom_js %}

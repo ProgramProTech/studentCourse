@@ -1,0 +1,187 @@
+{% extends 'admin_template/base_template.html' %}
+{% load static %}
+{% block page_title %}
+Add Student
+{% endblock page_title %}
+{% block main_content %}
+<div class="container-fluid pt-4 px-4">
+    <div class="row bg-light">
+        <div class="col-md-12">
+            <h3 class="mb-4">Add Student</h3>
+            <form id="add-student-form">
+                <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" class="form-control" name="first_name" id="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" class="form-control" name="last_name" id="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" name="username" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" name="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" name="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select class="form-control" name="gender" id="gender" required>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="profile_pic">Profile Picture</label>
+                    <input type="file" class="form-control" name="profile_pic" id="profile_pic">
+                </div>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select class="form-control" name="country" id="country" required>
+                        <option value="">Select Country</option>
+                        <!-- Options will be added here dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <select class="form-control" name="city" id="city" required>
+                        <option value="">Select City</option>
+                        <!-- Options will be populated based on selected country -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date_of_birth">Date of Birth</label>
+                    <input type="date" class="form-control" name="date_of_birth" id="date_of_birth" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" name="address" id="address" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    $(document).ready(function() {
+
+        // Populate country options
+        const countryCityMap = {
+            "USA": ["New York", "Los Angeles", "Chicago"],
+            "Canada": ["Toronto", "Vancouver", "Montreal"],
+            "UK": ["London", "Manchester", "Birmingham"]
+        };
+    
+        const countrySelect = $('#country');
+        $.each(countryCityMap, function(country, cities) {
+            countrySelect.append(new Option(country, country));
+        });
+    
+        $('#country').on('change', function() {
+            const selectedCountry = $(this).val();
+            const citySelect = $('#city');
+            citySelect.empty();
+            citySelect.append(new Option('Select City', ''));
+    
+            if (selectedCountry && countryCityMap[selectedCountry]) {
+                $.each(countryCityMap[selectedCountry], function(index, city) {
+                    citySelect.append(new Option(city, city));
+                });
+            }
+        });
+    
+        $("#email").keyup(function(){
+            var email = $(this).val();
+    
+            if(email!=""){
+                $.ajax({
+                    url: '{% url 'check_email_exist' %}',
+                    type: 'POST',
+                    data: {email: email}
+                })
+                .done(function(response){
+                    $(".email_error").remove();
+                    if(response == "True"){
+                        $("<span class='email_error' style='padding: 5px;color: red;font-weight: bold;'>Email Not Available</span>").insertAfter("#email");
+                    } else {
+                        $("<span class='email_error' style='padding: 5px;color: green;font-weight: bold;'>Email Available</span>").insertAfter("#email");
+                    }
+                })
+                .fail(function(){
+                    console.log("failed");
+                });
+            } else {
+                $(".email_error").remove();
+            }
+        });
+    
+        $("#username").keyup(function(){
+            var username = $(this).val();
+    
+            if(username!=""){
+                $.ajax({
+                    url: '{% url 'check_username_exist' %}',
+                    type: 'POST',
+                    data: {username: username}
+                })
+                .done(function(response){
+                    $(".username_error").remove();
+                    if(response == "True"){
+                        $("<span class='username_error' style='padding: 5px;color: red;font-weight: bold;'>Username Not Available</span>").insertAfter("#username");
+                    } else {
+                        $("<span class='username_error' style='padding: 5px;color: green;font-weight: bold;'>Username Available</span>").insertAfter("#username");
+                    }
+                })
+                .fail(function(){
+                    console.log("failed");
+                });
+            } else {
+                $(".username_error").remove();
+            }
+        });
+    
+        $('#add-student-form').on('submit', function(e) {
+            e.preventDefault();
+    
+            var formData = new FormData(this);
+    
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/admin/students/add/',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    alert('Student added successfully!');
+                    $('#add-student-form')[0].reset();
+                    $('#city').empty().append(new Option('Select City', ''));
+                },
+                error: function(xhr) {
+                    var errors = xhr.responseJSON;
+                    var errorMessage = 'An error occurred: ';
+    
+                    if (errors) {
+                        $.each(errors, function(key, value) {
+                            errorMessage += value + '\n';
+                        });
+                    } else {
+                        errorMessage += 'Please try again.';
+                    }
+    
+                    alert(errorMessage);
+                }
+            });
+        });
+    });
+    
+</script>
+{% endblock custom_js %}

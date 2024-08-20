@@ -1,0 +1,134 @@
+{% extends 'admin_template/base_template.html' %}
+{% block page_title %}
+Student Feedback
+{% endblock page_title %}
+{% block main_content %}
+    <div class="container-fluid pt-4 px-4 bg-light">
+        <div class="row">
+            <div class="col-md-12">
+                <div class=" card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Student Feedback</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Feedback Message</th>
+                                    <th>Sent On</th>
+                                    <th>Reply</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedback_table">
+                                <!-- Feedback data will be loaded here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="reply_modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Reply</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Reply To: <span id="reply_name"></span></p>
+                    <input type="hidden" id="reply_id" name="reply_id">
+                    <textarea class="form-control" rows="5" id="reply_message"></textarea>
+                    <button id="reply_btn" class="btn btn-info btn-block mt-3">Reply</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main_content %}
+
+{% block custom_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        const token = localStorage.getItem('token');
+        
+        // Fetch feedback data from API
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/feedback/',
+            type: 'GET',
+            headers: {
+                'Authorization': 'Token ' + token
+            },
+            success: function(data) {
+                var feedbackTable = $('#feedback_table');
+                feedbackTable.empty(); // Clear existing data
+
+                data.forEach(function(feedback) {
+                    var replyButton = feedback.feedback_reply === "" 
+                        ? '<button class="btn btn-success reply_open_modal" data-toggle="modal" data-target="#reply_modal">Reply</button>'
+                        : feedback.feedback_reply;
+
+                    var row = `<tr>
+                        <td>${feedback.id}</td>
+                        <td>${feedback.student_id}</td>
+                        <td>${feedback.student_name}</td>
+                        <td>${feedback.feedback}</td>
+                        <td>${new Date(feedback.created_at).toLocaleString()}</td>
+                        <td>${replyButton}</td>
+                    </tr>`;
+
+                    feedbackTable.append(row);
+                });
+
+                // Attach event handlers to dynamically added reply buttons
+                $(document).on("click", ".reply_open_modal", function() {
+                    var row = $(this).closest("tr");
+                    var id = row.find("td:eq(0)").text();
+                    var name = row.find("td:eq(2)").text();
+                    $("#reply_id").val(id);
+                    $("#reply_name").text(name);
+
+                    // Manually trigger the modal if needed
+                    $('#reply_modal').modal('show');
+                });
+            },
+            error: function() {
+                alert("Failed to load feedback data.");
+            }
+        });
+
+        // Handle reply submission
+        $(document).on("click", "#reply_btn", function() {
+            $(this).attr("disabled", "disabled").text("Sending Reply...");
+
+            var id = $("#reply_id").val();
+            var message = $("#reply_message").val();
+
+            $.ajax({
+                url: `http://127.0.0.1:8000/api/feedback/reply/${id}`,
+                type: 'PUT',
+                headers: {
+                  'Authorization': 'Token ' + token
+                },
+                data: {feedback_reply: message },
+                success: function(response) {
+                    alert("Reply Sent");
+                    location.reload();
+                },
+                error: function() {
+                    alert("Error in Sending Reply");
+                }
+            });
+        });
+    });
+</script>
+{% endblock custom_js %}

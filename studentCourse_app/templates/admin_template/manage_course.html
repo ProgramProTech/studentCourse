@@ -1,0 +1,137 @@
+{% extends 'admin_template/base_template.html' %}
+{% load static %}
+{% block page_title %}Manage Course{% endblock page_title %}
+
+{% block main_content %}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="row bg-light">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    <h3 class="card-title">Manage Course</h3>
+                    <div class="card-tools">
+                        <a href="{% url 'add_course' %}" class="btn btn-primary">Add New Course</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="courseTable" class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Course Name</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="courseTableBody">
+                                <!-- Rows will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+$(document).ready(function() {
+    const apiBaseUrl = 'http://127.0.0.1:8000/api/admin/courses/';
+
+    // Fetch and populate courses
+    function fetchCourses() {
+        $.ajax({
+            url: apiBaseUrl,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                let tbody = $('#courseTableBody');
+                tbody.empty(); // Clear existing rows
+
+                response.data.forEach(function(course) {
+                    let row = `
+                        <tr data-id="${course.id}">
+                            <td>${course.id}</td>
+                            <td><span class="course-name">${course.course_name}</span><input type="text" class="form-control course-name-input" style="display:none;" value="${course.course_name}"></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm edit-course">Edit</button>
+                                <button class="btn btn-success btn-sm save-course" style="display:none;">Save</button>
+                                <button class="btn btn-danger btn-sm delete-course">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+                });
+
+                // Bind events to the new buttons
+                bindEvents();
+            },
+            error: function(xhr, status, error) {
+                alert('Failed to fetch courses: ' + error);
+            }
+        });
+    }
+
+    // Bind events to the buttons
+    function bindEvents() {
+        // Edit button
+        $('.edit-course').off('click').on('click', function() {
+            let row = $(this).closest('tr');
+            row.find('.course-name').hide();
+            row.find('.course-name-input').show().focus();
+            row.find('.edit-course').hide();
+            row.find('.save-course').show();
+        });
+
+        // Save button
+        $('.save-course').off('click').on('click', function() {
+            let row = $(this).closest('tr');
+            let courseId = row.data('id');
+            let newCourseName = row.find('.course-name-input').val();
+
+            $.ajax({
+                url: `${apiBaseUrl}${courseId}`,
+                type: 'PUT',
+                data: JSON.stringify({ course_name: newCourseName }),
+                contentType: 'application/json',
+                success: function(response) {
+                    row.find('.course-name').text(newCourseName).show();
+                    row.find('.course-name-input').hide();
+                    row.find('.edit-course').show();
+                    row.find('.save-course').hide();
+                },
+                error: function(xhr, status, error) {
+                    alert('Failed to update course: ' + error);
+                }
+            });
+        });
+
+        // Delete button
+        $('.delete-course').off('click').on('click', function() {
+            let row = $(this).closest('tr');
+            let courseId = row.data('id');
+
+            if (confirm('Are you sure you want to delete this course?')) {
+                $.ajax({
+                    url: `${apiBaseUrl}${courseId}`,
+                    type: 'DELETE',
+                    success: function(response) {
+                        row.remove();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Failed to delete course: ' + error);
+                    }
+                });
+            }
+        });
+    }
+
+    // Initial fetch
+    fetchCourses();
+});
+</script>
+{% endblock custom_js %}

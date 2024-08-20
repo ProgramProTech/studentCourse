@@ -1,0 +1,70 @@
+{% extends 'admin_template/base_template.html' %}
+{% block page_title %}
+Student Contact Message
+{% endblock page_title %}
+{% block main_content %}
+
+<div class="container-fluid pt-4 px-4 bg-light">
+    <div class="row">
+        <div class="col-12">
+            <div class="card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Student Contact Message</h3>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody id="enquiries_table">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock main_content %}
+
+{% block custom_js %}
+<script>
+    $(document).ready(function() {
+        const token = localStorage.getItem('token');
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/contact-messages/',
+            type: 'GET',
+            headers: {
+              'Authorization': 'Token ' + token
+            },
+            success: function(data) {
+                var enquiriesTable = $('#enquiries_table');
+                enquiriesTable.empty(); 
+
+                data.forEach(function(enquirie) {
+                    var row = `<tr>
+                        <td>${enquirie.id}</td>
+                        <td>${enquirie.name}</td>
+                        <td>${enquirie.email}</td>
+                        <td>${enquirie.subject}</td>
+                        <td>${enquirie.message}</td>
+                        <td>${new Date(enquirie.created_at).toLocaleString()}</td>
+                    </tr>`;
+                    enquiriesTable.append(row);
+                });
+            },
+            error: function() {
+                alert("Failed to load enquiries data.");
+            }
+        });
+    });
+</script>
+{% endblock custom_js %}

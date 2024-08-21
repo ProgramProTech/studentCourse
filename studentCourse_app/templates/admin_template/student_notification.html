@@ -114,7 +114,7 @@ Student Notification
 
     function sendNotification(id, message){
         $.ajax({
-            url: 'http://studentdjangoapp.azurewebsites.net:8000/api/notifications/',
+            url: 'https://studentdjangoapp.azurewebsites.net:8000/api/notifications/',
             type: 'POST',
             headers: {
                 'Authorization': 'Token ' + token,

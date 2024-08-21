@@ -137,7 +137,7 @@ Manage Student
 
     // Initial population of the student data
     $.ajax({
-        url: 'http://studentdjangoapp.azurewebsites.net:8000/api/admin/students/',
+        url: 'https://studentdjangoapp.azurewebsites.net:8000/api/admin/students/',
         type: 'GET',
         dataType: 'json',
         success: function(response) {
@@ -199,7 +199,7 @@ Manage Student
 
                 if (confirm('Are you sure you want to delete this student?')) {
                     $.ajax({
-                        url: `http://studentdjangoapp.azurewebsites.net:8000/api/admin/students/delete/${studentId}`,
+                        url: `https://studentdjangoapp.azurewebsites.net:8000/api/admin/students/delete/${studentId}`,
                         type: 'DELETE',
                         success: function(result) {
                             console.log('Delete successful:', result);
@@ -245,7 +245,7 @@ Manage Student
         }
 
         $.ajax({
-            url: `http://studentdjangoapp.azurewebsites.net:8000/api/admin/students/update/${studentId}`,
+            url: `https://studentdjangoapp.azurewebsites.net:8000/api/admin/students/update/${studentId}`,
             type: 'PUT',
             data: formData,
             processData: false,

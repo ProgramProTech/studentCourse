@@ -114,7 +114,7 @@
     
         if (token) {
             $.ajax({
-                url: 'http://studentdjangoapp.azurewebsites.net:8000/api/profile/',
+                url: 'https://studentdjangoapp.azurewebsites.net:8000/api/profile/',
                 type: 'GET',
                 headers: {
                     'Authorization': 'Token ' + token
@@ -141,7 +141,7 @@
     
             if (token) {
                 $.ajax({
-                    url: 'http://studentdjangoapp.azurewebsites.net:8000/api/logout/',
+                    url: 'https://studentdjangoapp.azurewebsites.net:8000/api/logout/',
                     type: 'POST',
                     headers: {
                         'Authorization': 'Token ' + token

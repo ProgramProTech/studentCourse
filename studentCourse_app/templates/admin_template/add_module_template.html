@@ -57,7 +57,7 @@ Add Module
 $(document).ready(function() {
     // Populate course options
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/admin/courses/',
+        url: 'http://studentdjangoapp.azurewebsites.net:8000/api/admin/courses/',
         type: 'GET',
         success: function(response) {
             const courseSelect = $('#course');
@@ -85,7 +85,7 @@ $(document).ready(function() {
         };
 
         $.ajax({
-            url: 'http://127.0.0.1:8000/api/admin/modules/',
+            url: 'http://studentdjangoapp.azurewebsites.net:8000/api/admin/modules/',
             type: 'POST',
             data: JSON.stringify(formData),
             contentType: 'application/json',

@@ -157,7 +157,7 @@ function fillFormData(data) {
 
 function fetchProfileData() {
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/profile/',
+        url: 'http://studentdjangoapp.azurewebsites.net:8000/api/profile/',
         type: 'GET',
         headers: {
             'Authorization': 'Token ' + token
@@ -194,7 +194,7 @@ function updateProfile(event) {
     }
 
     $.ajax({
-        url: 'http://127.0.0.1:8000/api/profile/',
+        url: 'http://studentdjangoapp.azurewebsites.net:8000/api/profile/',
         type: 'PUT',
         headers: {
             'Authorization': 'Token ' + token

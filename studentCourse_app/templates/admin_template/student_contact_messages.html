@@ -40,7 +40,7 @@ Student Contact Message
     $(document).ready(function() {
         const token = localStorage.getItem('token');
         $.ajax({
-            url: 'http://127.0.0.1:8000/api/contact-messages/',
+            url: 'http://studentdjangoapp.azurewebsites.net:8000/api/contact-messages/',
             type: 'GET',
             headers: {
               'Authorization': 'Token ' + token

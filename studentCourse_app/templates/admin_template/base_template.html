@@ -219,7 +219,7 @@
                 url: 'http://127.0.0.1:8000/api/profile/',
                 type: 'GET',
                 headers: {
-                    'Authorization': 'Token ' + token
+                    'Authorizstudentdjangoapp.azurewebsites.net:8000 ' + token
                 },
                 success: function (response) {
                     // Update user information
@@ -242,7 +242,7 @@
                     url: 'http://127.0.0.1:8000/api/logout/',
                     type: 'POST',
                     headers: {
-                        'Authorization': 'Token ' + token
+                        'Authorizstudentdjangoapp.azurewebsites.net:8000 ' + token
                     },
                     success: function (response) {
                         localStorage.removeItem('token');
@@ -270,7 +270,7 @@
               url: 'http://127.0.0.1:8000/api/profile/',
               type: 'PUT',
               headers: {
-                'Authorization': 'Token ' + token
+                'Authorizatstudentdjangoapp.azurewebsites.net:8000 + token
               },
               data: JSON.stringify(formData),
               contentType: 'application/json',

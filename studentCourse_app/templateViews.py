@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from studentCourse_app.models import  Student
+from studentCourse_app.models import  Student,Courses,Module,FeedBackStudent
 
 
 def LoginPage(request):
@@ -9,7 +9,13 @@ def SignupStudent(request):
     return render(request,"signup_student_page.html")
 
 def AdminHome(request):
-    return render(request, "admin_template/home_content.html")
+    context = {
+        "student_count": Student.objects.count(),
+        "course_count": Courses.objects.count(),
+        "module_count": Module.objects.count(),
+        "feedback_count": FeedBackStudent.objects.count(),
+    }
+    return render(request, "admin_template/home_content.html", context)
 
 def AdminProfile(request):
     return render(request,"admin_template/admin_profile.html")

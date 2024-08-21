@@ -5,53 +5,48 @@ Home
 {% endblock page_title %}
 
 {% block main_content %}
- 
-            <!-- Sale & Revenue Start -->
-            <div class="container-fluid pt-4 px-4">
-                <div class="row g-4">
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-line fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Today Sale</p>
-                                <h6 class="mb-0">$1234</h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-bar fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Total Sale</p>
-                                <h6 class="mb-0">$1234</h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-area fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Today Revenue</p>
-                                <h6 class="mb-0">$1234</h6>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-xl-3">
-                        <div class="bg-light rounded d-flex align-items-center justify-content-between p-4">
-                            <i class="fa fa-chart-pie fa-3x text-primary"></i>
-                            <div class="ms-3">
-                                <p class="mb-2">Total Revenue</p>
-                                <h6 class="mb-0">$1234</h6>
-                            </div>
-                        </div>
+    <!-- Dashboard Stats Start -->
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-md-6 mb-2">
+                <div class="bg-light rounded d-flex align-items-center  p-4">
+                    <i class="fa fa-users fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Total Students</p>
+                        <h6 class="mb-0">{{ student_count }}</h6>
                     </div>
                 </div>
             </div>
-    
-
-          
-
-    
+            <div class="col-md-6 mb-2">
+                <div class="bg-light rounded d-flex align-items-center  p-4">
+                    <i class="fa fa-book fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Total Courses</p>
+                        <h6 class="mb-0">{{ course_count }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-light rounded d-flex align-items-center  p-4">
+                    <i class="fa fa-folder-open fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Total Modules</p>
+                        <h6 class="mb-0">{{ module_count }}</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-light rounded d-flex align-items-center  p-4">
+                    <i class="fa fa-comments fa-3x text-primary"></i>
+                    <div class="ms-3">
+                        <p class="mb-2">Total Feedback</p>
+                        <h6 class="mb-0">{{ feedback_count }}</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Dashboard Stats End -->
 {% endblock main_content %}
 
 {% block custom_js %}

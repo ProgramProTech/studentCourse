@@ -64,3 +64,6 @@ def About(request):
 
 def Contact(request):
     return render(request, "student_template/contact.html") 
+
+def CourseShow(request):
+    return render(request, "student_template/course.html") 

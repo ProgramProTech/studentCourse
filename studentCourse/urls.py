@@ -14,7 +14,7 @@ from studentCourse_app.templateViews import (
     LoginPage,SignupStudent,AdminHome,AdminProfile,AddStudent,
     AddModule,AddCourse,ManageCourse,ManageModule,ManageStudent,
     StudentFeedbackMessage,StudentContactUs,NotificationStudent,
-    StudentHome,StudentProfile,About,Contact)
+    StudentHome,StudentProfile,About,Contact,CourseShow)
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -73,4 +73,5 @@ urlpatterns = [
     path('student_profile',StudentProfile,name="student_profile"),
     path('about',About,name="about"),
     path('contact',Contact,name="contact"),
+    path('courseshow',CourseShow,name='courseshow')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

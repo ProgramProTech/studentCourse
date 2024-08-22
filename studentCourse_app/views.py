@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .serializers import AdminSerializer, StudentSerializer,FeedBackStudentSerializer,NotificationSerializer,ContactMessageSerializer,RegistrationSerializer
-
+from rest_framework.parsers import MultiPartParser, FormParser
 class StudentSignupView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = StudentSignupSerializer(data=request.data)
@@ -116,16 +116,16 @@ class CoursesAPIView(APIView):
         return Response({"message": "Course deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
     
 class ModuleAPIView(APIView):
-    def get(self, request, pk=None):
-        if pk:
-            module = get_object_or_404(Module, pk=pk)
-            serializer = ModuleSerializer(module)
-            return Response({"message": "Module retrieved successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
-        else:
-            modules = Module.objects.all()
+    def get(self, request):
+        course_id = request.query_params.get('course_id') 
+        
+        if course_id:
+            modules = Module.objects.filter(course=course_id)
+            if not modules.exists():
+                return Response({"message": "No modules found for the given course ID."}, status=status.HTTP_404_NOT_FOUND)
             serializer = ModuleSerializer(modules, many=True)
             return Response({"message": "Modules retrieved successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
-
+        
     def post(self, request):
         serializer = ModuleSerializer(data=request.data)
         if serializer.is_valid():
@@ -148,7 +148,7 @@ class ModuleAPIView(APIView):
     
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
-
+    parser_classes = (MultiPartParser, FormParser)
     def get(self, request, *args, **kwargs):
         user = request.user
         if user.user_type == '1':  # Admin
@@ -173,10 +173,13 @@ class ProfileView(APIView):
     def put(self, request, *args, **kwargs):
         user = request.user
         data = request.data
+        profile_pic = request.FILES.get('profile_pic', None)
 
         if user.user_type == '1':  # Admin
             try:
                 admin = Admin.objects.get(custom_user=user)
+                if profile_pic:
+                    admin.profile_pic = profile_pic
                 serializer = AdminSerializer(admin, data=data, partial=True)
                 if serializer.is_valid():
                     serializer.save()
@@ -189,6 +192,8 @@ class ProfileView(APIView):
         elif user.user_type == '2':  # Student
             try:
                 student = Student.objects.get(custom_user=user)
+                if profile_pic:
+                    student.profile_pic = profile_pic
                 serializer = StudentSerializer(student, data=data, partial=True)
                 if serializer.is_valid():
                     serializer.save()

@@ -46,30 +46,29 @@ Course
 {% block custom_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('http://127.0.0.1:8000/api/admin/courses/')
+        fetch('https://studentdjangoapp.azurewebsites.net
+/api/admin/courses/')
             .then(response => response.json())
             .then(data => {
                 const courses = data.data;
                 const container = document.getElementById('course-categories');
                 container.innerHTML = ''; // Clear existing content
                 
-                // Define images and text
                 const images = [
-                    '{% static 'img/cat-1.jpg' %}', 
-                    '{% static 'img/cat-2.jpg' %}', 
-                    '{% static 'img/cat-3.jpg' %}', 
-                    '{% static 'img/cat-4.jpg' %}'
+                    '{% static "img/cat-1.jpg" %}', 
+                    '{% static "img/cat-2.jpg" %}', 
+                    '{% static "img/cat-3.jpg" %}', 
+                    '{% static "img/cat-4.jpg" %}'
                 ];
                 
-                // Create HTML structure
                 function createCourseHtml(course, imageUrl, dataWowDelay) {
                     return `
                         <div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="${dataWowDelay}s">
-                            <a class="position-relative d-block overflow-hidden" href="">
+                            <a class="position-relative d-block overflow-hidden course-link" href="#" data-course-id="${course.id}">
                                 <img class="img-fluid" src="${imageUrl}" alt="">
                                 <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
                                     <h5 class="m-0">${course.course_name}</h5>
-                                    <small class="text-primary">49 Courses</small>
+                                    <small class="text-primary">Course</small>
                                 </div>
                             </a>
                         </div>
@@ -77,20 +76,17 @@ Course
                 }
                 
                 if (courses.length > 0) {
-                    // Display the first item in a larger column
                     container.innerHTML += createCourseHtml(courses[0], images[0], 0.1);
                 }
                 
-                // Display the remaining items
                 for (let i = 1; i < courses.length; i++) {
                     container.innerHTML += createCourseHtml(courses[i], images[i % images.length], (i + 1) * 0.2);
                 }
                 
-                // Handle the case with more than 4 courses
                 if (courses.length > 4) {
                     container.innerHTML += `
                         <div class="col-lg-5 col-md-6 wow zoomIn" data-wow-delay="${(courses.length + 1) * 0.2}s" style="min-height: 350px;">
-                            <a class="position-relative d-block h-100 overflow-hidden" href="">
+                            <a class="position-relative d-block h-100 overflow-hidden course-link" href="#" data-course-id="more-courses">
                                 <img class="img-fluid position-absolute w-100 h-100" src="${images[courses.length % images.length]}" alt="" style="object-fit: cover;">
                                 <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin:  1px;">
                                     <h5 class="m-0">More Courses</h5>
@@ -100,9 +96,31 @@ Course
                         </div>
                     `;
                 }
+    
+                // Add event listener to course links
+                document.querySelectorAll('.course-link').forEach(function(link) {
+                    link.addEventListener('click', function(event) {
+                        event.preventDefault();
+                        const courseId = this.getAttribute('data-course-id');
+                        
+                        if (courseId !== "more-courses") {
+                            fetch(`https://studentdjangoapp.azurewebsites.net
+/api/admin/modules?course_id=${courseId}`)
+                                .then(response => response.json())
+                                .then(moduleData => {
+                                    const moduleDataEncoded = encodeURIComponent(JSON.stringify(moduleData));
+                                    window.location.href = `{% url "moduleshow" %}?module_data=${moduleDataEncoded}`;
+                                })
+                                .catch(error => console.error('Error fetching modules:', error));
+                        } else {
+                            alert("More Courses link clicked. Implement further actions here.");
+                        }
+                    });
+                });
             })
             .catch(error => console.error('Error fetching courses:', error));
     });
+    
     </script>
     
 {% endblock custom_js %}

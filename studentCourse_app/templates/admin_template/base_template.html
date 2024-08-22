@@ -60,9 +60,9 @@
                 </div>
                 <div class="navbar-nav w-100">
                     <a href="{% url "admin_home" %}" class="nav-item nav-link active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
-                    <a href="{% url "add_student" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Student</a>
-                    <a href="{% url "add_course" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Course</a>
-                    <a href="{% url "add_module" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Module</a>
+                    <a href="{% url "add_student" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Add Student</a>
+                    <a href="{% url "add_course" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Add Course</a>
+                    <a href="{% url "add_module" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Add Module</a>
                     <div class="nav-item dropdown">
                       <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-laptop me-2"></i>Management</a>
                       <div class="dropdown-menu bg-transparent border-0">
@@ -71,7 +71,7 @@
                           <a href="{% url "manage_module" %}" class="dropdown-item">Module</a>
                       </div>
                   </div>
-                  <a href="{% url "student_feedback_message" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Student Feedback</a>
+                  <a href="{% url "student_feedback_message" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Feedback</a>
                   <a href="{% url "student_contact_message" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Message</a>
                   <a href="{% url "admin_notification_student" %}" class="nav-item nav-link"><i class="fa fa-th me-2"></i>Notification</a>
                  
@@ -216,10 +216,11 @@
     
         if (token) {
             $.ajax({
-                url: 'http://127.0.0.1:8000/api/profile/',
+                url: 'https://studentdjangoapp.azurewebsites.net
+/api/profile/',
                 type: 'GET',
                 headers: {
-                    'Authorizstudentdjangoapp.azurewebsites.net:8000 ' + token
+                    'Authorization': 'Token ' + token
                 },
                 success: function (response) {
                     // Update user information
@@ -239,10 +240,11 @@
     
             if (token) {
                 $.ajax({
-                    url: 'http://127.0.0.1:8000/api/logout/',
+                    url: 'https://studentdjangoapp.azurewebsites.net
+/api/logout/',
                     type: 'POST',
                     headers: {
-                        'Authorizstudentdjangoapp.azurewebsites.net:8000 ' + token
+                        'Authorization': 'Token ' + token
                     },
                     success: function (response) {
                         localStorage.removeItem('token');
@@ -267,11 +269,12 @@
           };
           const token = localStorage.getItem('token');
           $.ajax({
-              url: 'http://127.0.0.1:8000/api/profile/',
+              url: 'https://studentdjangoapp.azurewebsites.net
+/api/profile/',
               type: 'PUT',
               headers: {
-                'Authorizatstudentdjangoapp.azurewebsites.net:8000 + token
-              },
+                'Authorization': 'Token ' + token
+            },
               data: JSON.stringify(formData),
               contentType: 'application/json',
               success: function(response) {

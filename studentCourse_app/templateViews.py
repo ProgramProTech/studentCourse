@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from studentCourse_app.models import  Student,Courses,Module,FeedBackStudent
+import json
 
 
 def LoginPage(request):
@@ -40,7 +41,7 @@ def ManageModule(request):
     return render(request,"admin_template/manage_module.html")
 
 def StudentFeedbackMessage(request):
-    return render(request,"Admin_template/student_feedback.html")
+    return render(request,"admin_template/student_feedback.html")
 
 
 def StudentContactUs(request):
@@ -48,7 +49,7 @@ def StudentContactUs(request):
 
 def NotificationStudent(request):
     students=Student.objects.all()
-    return render(request,"Admin_template/student_notification.html",{"students":students})
+    return render(request,"admin_template/student_notification.html",{"students":students})
 
 
 def StudentHome(request):
@@ -67,3 +68,12 @@ def Contact(request):
 
 def CourseShow(request):
     return render(request, "student_template/course.html") 
+
+from django.shortcuts import render
+
+def ModuleShow(request):
+    module_data = request.GET.get('module_data')
+    if module_data:
+        module_data = json.loads(module_data)
+    
+    return render(request, 'student_template/module.html', {'module_data': module_data})

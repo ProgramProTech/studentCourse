@@ -39,7 +39,7 @@ urlpatterns = [
     path('api/admin/courses/<int:pk>', CoursesAPIView.as_view()),  # Handles GET, PUT, DELETE for a specific course
 
     path('api/admin/modules/', ModuleAPIView.as_view()),  # Handles GET all, POST new module
-    path('api/admin/modules/<int:pk>', ModuleAPIView.as_view()),  # Handles GET, PUT, DELETE for a specific module
+    path('api/admin/modules/<int:pk>/', ModuleAPIView.as_view()),  # Handles GET, PUT, DELETE for a specific module
     
     path('api/profile/', ProfileView.as_view(), name='profile'),
 

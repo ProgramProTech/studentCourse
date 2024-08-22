@@ -44,13 +44,16 @@
 {% block custom_js %}
 <script>
     $(document).ready(function() {
-        const apiBaseUrl = 'https://studentdjangoapp.azurewebsites.net/api/admin/modules/';
-    
+        const apiBaseUrl = 'https://studentdjangoapp.azurewebsites.net/api/admin/modules';
+        const token = localStorage.getItem('token');
         // Fetch and populate modules
         function fetchModules() {
             $.ajax({
                 url: apiBaseUrl,
                 type: 'GET',
+                headers: {
+                    'Authorization': 'Token ' + token
+                },
                 dataType: 'json',
                 success: function(response) {
                     let tbody = $('#moduleTableBody');
@@ -120,6 +123,9 @@
                 $.ajax({
                     url: `${apiBaseUrl}${moduleId}`,
                     type: 'PUT',
+                    headers: {
+                        'Authorization': 'Token ' + token
+                    },
                     data: JSON.stringify(updatedModule),
                     contentType: 'application/json',
                     success: function(response) {
@@ -150,6 +156,9 @@
                     $.ajax({
                         url: `${apiBaseUrl}${moduleId}`,
                         type: 'DELETE',
+                        headers: {
+                            'Authorization': 'Token ' + token
+                        },
                         success: function(response) {
                             row.remove();
                         },

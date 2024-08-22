@@ -125,7 +125,13 @@ class ModuleAPIView(APIView):
                 return Response({"message": "No modules found for the given course ID."}, status=status.HTTP_404_NOT_FOUND)
             serializer = ModuleSerializer(modules, many=True)
             return Response({"message": "Modules retrieved successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
-        
+        else:
+            modules = Module.objects.all()
+            if not modules.exists():
+                return Response({"message": "No modules found"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = ModuleSerializer(modules, many=True)
+            return Response({"message": "Modules retrieved successfully.", "data": serializer.data}, status=status.HTTP_200_OK)
+
     def post(self, request):
         serializer = ModuleSerializer(data=request.data)
         if serializer.is_valid():

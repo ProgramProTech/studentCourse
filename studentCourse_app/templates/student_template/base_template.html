@@ -51,10 +51,10 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
               <div class="navbar-nav ms-auto p-4 p-lg-0">
-                  <a href="{% url "student_home" %}" class="nav-item nav-link active">Home</a>
-                  <a href="{% url "about" %}" class="nav-item nav-link">About Us</a>
-                  <a href="{% url "courseshow" %}" class="nav-item nav-link">Courses</a>
-                  <a href="{% url "contact" %}" class="nav-item nav-link">Contact Us</a>
+                <a href="{% url 'student_home' %}" class="nav-item nav-link {% if request.path == '/student_home' %}active{% endif %}">Home</a>
+                <a href="{% url 'about' %}" class="nav-item nav-link {% if request.path == '/about' %}active{% endif %}">About Us</a>
+                <a href="{% url 'courseshow' %}" class="nav-item nav-link {% if request.path == '/courseshow' %}active{% endif %}">Courses</a>
+                <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact Us</a>
               </div>
               <div class="nav-item dropdown">
                 <a href="#" class="nav-link" aria-expanded="false">
@@ -102,7 +102,7 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static "lib/wow/wow.min.js" %} "></script>
+    <script src="{% static 'lib/wow/wow.min.js' %} "></script>
     <script src="{% static 'lib/easing/easing.min.js' %}"></script>
     <script src="{% static 'lib/waypoints/waypoints.min.js'%}"></script>
     <script src="{% static 'lib/owlcarousel/owl.carousel.min.js'%}"></script>
@@ -125,7 +125,7 @@
                     $('.user-name').text(userInfo.first_name + ' ' + userInfo.last_name);
     
                     // Set profile picture
-                    const profilePicUrl = userInfo.profile_pic ? userInfo.profile_pic : '{% static "img/img/user.jpg" %}';
+                    const profilePicUrl = userInfo.profile_pic ? userInfo.profile_pic : '{% static "img/user.jpg" %}';
                     $('#profilePic').attr('src', profilePicUrl);
                 },
                 error: function (xhr, status, error) {

@@ -216,8 +216,7 @@
     
         if (token) {
             $.ajax({
-                url: 'https://studentdjangoapp.azurewebsites.net
-/api/profile/',
+                url: 'https://studentdjangoapp.azurewebsites.net/api/profile/',
                 type: 'GET',
                 headers: {
                     'Authorization': 'Token ' + token
@@ -232,7 +231,7 @@
                 }
             });
         } else {
-            alert('No token found. You are not logged in.');
+            window.location.href="/";
         }
     
         $('#logoutButton').click(function (e) {
@@ -240,8 +239,7 @@
     
             if (token) {
                 $.ajax({
-                    url: 'https://studentdjangoapp.azurewebsites.net
-/api/logout/',
+                    url: 'https://studentdjangoapp.azurewebsites.net/api/logout/',
                     type: 'POST',
                     headers: {
                         'Authorization': 'Token ' + token
@@ -269,8 +267,7 @@
           };
           const token = localStorage.getItem('token');
           $.ajax({
-              url: 'https://studentdjangoapp.azurewebsites.net
-/api/profile/',
+              url: 'https://studentdjangoapp.azurewebsites.net/api/profile/',
               type: 'PUT',
               headers: {
                 'Authorization': 'Token ' + token

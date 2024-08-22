@@ -55,6 +55,15 @@
                 <a href="{% url 'about' %}" class="nav-item nav-link {% if request.path == '/about' %}active{% endif %}">About Us</a>
                 <a href="{% url 'courseshow' %}" class="nav-item nav-link {% if request.path == '/courseshow' %}active{% endif %}">Courses</a>
                 <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact Us</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link" id="notificationDropdown" data-bs-toggle="dropdown">
+                        <i class="fa fa-bell" style="font-size: 20px;"></i>
+                        <span id="notificationCount" class="badge bg-danger" style="font-size: 12px;"></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" style="left: auto; right: 0;" id="notificationMenu">
+                    </ul>
+                </div>
+                
               </div>
               <div class="nav-item dropdown">
                 <a href="#" class="nav-link" aria-expanded="false">
@@ -111,6 +120,9 @@
     <script>
       $(document).ready(function () {
         const token = localStorage.getItem('token');
+        const notificationDropdown = $('#notificationDropdown');
+        const notificationMenu = $('#notificationMenu');
+        const notificationCount = $('#notificationCount');
     
         if (token) {
             $.ajax({
@@ -158,6 +170,49 @@
                 alert('No token found. You are not logged in.');
             }
         });
+      
+        function fetchNotifications() {
+            if (token) {
+                $.ajax({
+                    url: 'https://studentdjangoapp.azurewebsites.net/api/notifications/',
+                    type: 'GET',
+                    headers: {
+                        'Authorization': 'Token ' + token
+                    },
+                    success: function (response) {
+                        const notifications = response;
+                        notificationMenu.empty(); // Clear any existing notifications
+                        if (notifications.length > 0) {
+                            notificationCount.text(notifications.length);
+                            notifications.forEach(notification => {
+                                const notificationItem = `
+                                    <li>
+                                        <a href="#" class="dropdown-item">
+                                            ${notification.message}
+                                            <br><small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
+                                        </a>
+                                    </li>
+                                `;
+                                notificationMenu.append(notificationItem);
+                            });
+                        } else {
+                            notificationMenu.append('<li><a href="#" class="dropdown-item">No new notifications</a></li>');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Failed to fetch notifications: ' + xhr.responseText);
+                    }
+                });
+            }
+        }
+    
+        // Fetch notifications when the dropdown is shown
+        notificationDropdown.on('show.bs.dropdown', function () {
+            fetchNotifications();
+        });
+    
+        // Fetch notifications on page load
+        fetchNotifications();
     });
     
   </script>
@@ -166,3 +221,8 @@
 </body>
 
 </html>
+
+
+
+   
+

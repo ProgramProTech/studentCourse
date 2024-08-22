@@ -6,30 +6,143 @@ Module
 
 {% block main_content %}
 
-    <!-- Header Start -->
-    <div class="container-fluid bg-primary py-5 mb-5 page-header">
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-lg-10 text-center">
-                    <h1 class="display-3 text-white animated slideInDown">Module</h1>
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb justify-content-center">
-                            <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
-                            <li class="breadcrumb-item text-white active" aria-current="page">Module</li>
-                        </ol>
-                    </nav>
-                </div>
+<!-- Header Start -->
+<div class="container-fluid bg-primary py-5 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">Module</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Module</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
-    <!-- Header End -->
+</div>
+<!-- Header End -->
 
-
-
+<!-- Module List Start -->
+<div class="container">
+    <div class="row" id="moduleList">
+        <!-- Module items will be inserted here dynamically -->
+    </div>
+</div>
+<!-- Module List End -->
 
 {% endblock main_content %}
 
 {% block custom_js %}
+<script>
+    $(document).ready(function () {
+        const token = localStorage.getItem('token');
+        const courseId = new URLSearchParams(window.location.search).get('course_id');
+        const registrationApiUrl = 'https://studentdjangoapp.azurewebsites.net/api/registrations/';
+        const modulesApiUrl = `https://studentdjangoapp.azurewebsites.net/api/admin/modules?course_id=${courseId}`;
+        
+        async function fetchModules() {
+            try {
+                // Get module data based on course_id
+                const moduleResponse = await $.get(modulesApiUrl);
+                const modules = moduleResponse.data;
+                const moduleList = $('#moduleList');
+                moduleList.empty();
 
+                // Get registration data
+                const registrationResponse = await $.ajax({
+                    url: registrationApiUrl,
+                    type: 'GET',
+                    headers: {
+                        'Authorization': 'Token ' + token
+                    }
+                });
+                const registrations = registrationResponse;
+
+                // Append modules to the list
+                $.each(modules, function (index, module) {
+                    let buttonHtml = '';
+                    const isRegistered = registrations?.some(reg => reg.module === module.id);
+                    
+                    if (isRegistered) {
+                        buttonHtml = '<button class="btn btn-danger unregister-btn" data-module-id="' + module.id + '">Unregister</button>';
+                    } else {
+                        buttonHtml = '<button class="btn btn-primary register-btn" data-module-id="' + module.id + '">Register</button>';
+                    }
+                    
+                    moduleList.append(
+                        `<div class="col-lg-4 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${module.name}</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">${module.code}</h6>
+                                    <p class="card-text">${module.description}</p>
+                                    ${buttonHtml}
+                                </div>
+                            </div>
+                        </div>`
+                    );
+                });
+            } catch (error) {
+                console.error('Error fetching modules or registrations:', error);
+            }
+        }
+
+        async function registerModule(moduleId) {
+            try {
+                await $.ajax({
+                    url: 'https://studentdjangoapp.azurewebsites.net/api/registrations/',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Token ' + token
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        module: moduleId,
+                        registration_date: new Date().toISOString().split('T')[0]
+                    })
+                });
+                alert('Successfully registered!');
+                fetchModules(); // Refresh the module list
+            } catch (error) {
+                alert('Registration failed: ' + error.responseText);
+            }
+        }
+
+        function unregisterModule(moduleId) {
+            $.ajax({
+                url: `https://studentdjangoapp.azurewebsites.net/api/registrations/delete_by_module/${moduleId}`,
+                type: 'DELETE',
+                headers: {
+                    'Authorization': 'Token ' + token
+                },
+                success: function () {
+                    alert('Successfully unregistered!');
+                    fetchModules(); 
+                },
+                error: function (xhr, status, error) {
+                    alert('Unregistration failed: ' + xhr.responseText);
+                }
+            });
+        }
+        
     
-{% endblock custom_js %}
+        
+
+        // Fetch modules on page load
+        fetchModules();
+
+        // Handle register/unregister button clicks
+        $(document).on('click', '.register-btn', function () {
+            const moduleId = $(this).data('module-id');
+            registerModule(moduleId);
+        });
+
+        $(document).on('click', '.unregister-btn', function () {
+            const moduleId = $(this).data('module-id');
+            unregisterModule(moduleId);
+        });
+    });
+</script>
+{% endblock %}

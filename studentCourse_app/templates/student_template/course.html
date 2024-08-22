@@ -106,8 +106,7 @@ Course
                             fetch(`https://studentdjangoapp.azurewebsites.net/api/admin/modules?course_id=${courseId}`)
                                 .then(response => response.json())
                                 .then(moduleData => {
-                                    const moduleDataEncoded = encodeURIComponent(JSON.stringify(moduleData));
-                                    window.location.href = `{% url "moduleshow" %}?module_data=${moduleDataEncoded}`;
+                                    window.location.href = `{% url "moduleshow" %}?course_id=${courseId}`;
                                 })
                                 .catch(error => console.error('Error fetching modules:', error));
                         } else {

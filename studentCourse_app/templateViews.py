@@ -72,8 +72,4 @@ def CourseShow(request):
 from django.shortcuts import render
 
 def ModuleShow(request):
-    module_data = request.GET.get('module_data')
-    if module_data:
-        module_data = json.loads(module_data)
-    
-    return render(request, 'student_template/module.html', {'module_data': module_data})
+    return render(request, 'student_template/module.html')

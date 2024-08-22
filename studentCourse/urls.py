@@ -8,7 +8,7 @@ from studentCourse_app.views import (
     FeedBackStudentListView, FeedBackStudentDetailView, 
     FeedBackStudentReplyView,NotificationListView, NotificationDetailView,
     ContactMessageListView, ContactMessageDetailView,RegistrationListCreateView,
-    RegistrationDetailView,check_email_exist,check_username_exist
+    RegistrationDetailView,check_email_exist,check_username_exist,RegistrationDeleteView
 )
 from studentCourse_app.templateViews import (
     LoginPage,SignupStudent,AdminHome,AdminProfile,AddStudent,
@@ -52,6 +52,7 @@ urlpatterns = [
     path('api/contact-messages/<int:pk>', ContactMessageDetailView.as_view(), name='contact-message-detail'),
     path('api/registrations/', RegistrationListCreateView.as_view(), name='registration-list-create'),
     path('api/registrations/<int:pk>/', RegistrationDetailView.as_view(), name='registration-detail'),
+    path('api/registrations/delete_by_module/<int:module_id>', RegistrationDeleteView.as_view(), name='delete_registration_by_module'),
 
     path('check_email_exist', check_email_exist,name="check_email_exist"),
     path('check_username_exist', check_username_exist,name="check_username_exist"),

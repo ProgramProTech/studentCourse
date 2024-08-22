@@ -420,9 +420,24 @@ class RegistrationDetailView(APIView):
         return Response(serializer.data)
 
 
-    def delete(self, request, pk, *args, **kwargs):
+class RegistrationDeleteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object_by_module(self, module_id, user):
+        try:
+            if user.user_type == '1':  # Admin
+                return Registration.objects.get(module=module_id)
+            elif user.user_type == '2':  # Student
+                student = Student.objects.get(custom_user=user)
+                return Registration.objects.get(module=module_id, student=student)
+            else:
+                raise Http404
+        except Registration.DoesNotExist:
+            raise Http404
+
+    def delete(self, request, module_id, *args, **kwargs):
         user = request.user
-        registration = self.get_object(pk, user)
+        registration = self.get_object_by_module(module_id, user)
 
         if user.user_type == '1':  # Admin can delete any registration
             registration.delete()
@@ -438,6 +453,7 @@ class RegistrationDetailView(APIView):
             return Response({"error": "Invalid user type."}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
     
 
 @csrf_exempt

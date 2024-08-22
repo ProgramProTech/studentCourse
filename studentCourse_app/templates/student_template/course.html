@@ -46,8 +46,7 @@ Course
 {% block custom_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('https://studentdjangoapp.azurewebsites.net
-/api/admin/courses/')
+        fetch('https://studentdjangoapp.azurewebsites.net/api/admin/courses/')
             .then(response => response.json())
             .then(data => {
                 const courses = data.data;
@@ -104,8 +103,7 @@ Course
                         const courseId = this.getAttribute('data-course-id');
                         
                         if (courseId !== "more-courses") {
-                            fetch(`https://studentdjangoapp.azurewebsites.net
-/api/admin/modules?course_id=${courseId}`)
+                            fetch(`https://studentdjangoapp.azurewebsites.net/api/admin/modules?course_id=${courseId}`)
                                 .then(response => response.json())
                                 .then(moduleData => {
                                     const moduleDataEncoded = encodeURIComponent(JSON.stringify(moduleData));

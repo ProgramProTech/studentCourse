@@ -28,7 +28,7 @@ $(document).ready(function() {
         var formData = $(this).serialize();
 
         $.ajax({
-            url: 'https://studentdjangoapp.azurewebsites.net:8000/api/admin/courses/',
+            url: 'https://studentdjangoapp.azurewebsites.net/api/admin/courses/',
             type: 'POST',
             data: formData,
             success: function(response) {

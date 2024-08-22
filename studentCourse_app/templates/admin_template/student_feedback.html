@@ -63,7 +63,7 @@ Student Feedback
         
         // Fetch feedback data from API
         $.ajax({
-            url: 'https://studentdjangoapp.azurewebsites.net:8000/api/feedback/',
+            url: 'https://studentdjangoapp.azurewebsites.net/api/feedback/',
             type: 'GET',
             headers: {
                 'Authorization': 'Token ' + token
@@ -114,7 +114,7 @@ Student Feedback
             var message = $("#reply_message").val();
 
             $.ajax({
-                url: `https://studentdjangoapp.azurewebsites.net:8000/api/feedback/reply/${id}`,
+                url: `https://studentdjangoapp.azurewebsites.net/api/feedback/reply/${id}`,
                 type: 'PUT',
                 headers: {
                   'Authorization': 'Token ' + token

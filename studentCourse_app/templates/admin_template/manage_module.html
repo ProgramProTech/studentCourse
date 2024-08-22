@@ -44,7 +44,7 @@
 {% block custom_js %}
 <script>
     $(document).ready(function() {
-        const apiBaseUrl = 'https://studentdjangoapp.azurewebsites.net/api/admin/modules';
+        const apiBaseUrl = 'https://studentdjangoapp.azurewebsites.net/api/admin/modules/';
         const token = localStorage.getItem('token');
         // Fetch and populate modules
         function fetchModules() {

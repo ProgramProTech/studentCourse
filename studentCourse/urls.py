@@ -8,8 +8,8 @@ from studentCourse_app.views import (
     FeedBackStudentListView, FeedBackStudentDetailView, 
     FeedBackStudentReplyView,NotificationListView, NotificationDetailView,
     ContactMessageListView, ContactMessageDetailView,RegistrationListCreateView,
-    RegistrationDetailView,check_email_exist,check_username_exist,RegistrationDeleteView
-)
+    RegistrationDetailView,check_email_exist,check_username_exist,RegistrationDeleteView,
+    user_type_check)
 from studentCourse_app.templateViews import (
     LoginPage,SignupStudent,AdminHome,AdminProfile,AddStudent,
     AddModule,AddCourse,ManageCourse,ManageModule,ManageStudent,
@@ -21,9 +21,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
 
-    path('',LoginPage,name="login_page"),
+    path('login_page',LoginPage,name="login_page"),
     path('signup_student',SignupStudent,name="signup_student"),
-
+    path('api/auth/user-status/', user_type_check, name='user-status'),
     
     path('admin/', admin.site.urls),
     path('api/signup/', StudentSignupView.as_view(), name='student-signup'),
@@ -57,23 +57,23 @@ urlpatterns = [
     path('check_email_exist', check_email_exist,name="check_email_exist"),
     path('check_username_exist', check_username_exist,name="check_username_exist"),
     #Admin
-    path('admin_home',AdminHome,name="admin_home"),
-    path('admin_profile', AdminProfile,name="admin_profile"),
-    path('add_student', AddStudent,name="add_student"),
-    path('add_course', AddCourse, name='add_course'),
-    path('add_module', AddModule, name='add_module'),
-    path('manage_student', ManageStudent,name="manage_student"),
-    path('manage_course', ManageCourse,name="manage_course"),
-    path('manage_module', ManageModule,name="manage_module"),
-    path('student_feedback_message', StudentFeedbackMessage,name="student_feedback_message"),
-    path('student_contact_message', StudentContactUs,name="student_contact_message"),
-    path('admin_notification_student', NotificationStudent,name="admin_notification_student"),
+    path('admin/admin_home',AdminHome,name="admin_home"),
+    path('admin/admin_profile', AdminProfile,name="admin_profile"),
+    path('admin/add_student', AddStudent,name="add_student"),
+    path('admin/add_course', AddCourse, name='add_course'),
+    path('admin/add_module', AddModule, name='add_module'),
+    path('admin/manage_student', ManageStudent,name="manage_student"),
+    path('admin/manage_course', ManageCourse,name="manage_course"),
+    path('admin/manage_module', ManageModule,name="manage_module"),
+    path('admin/student_feedback_message', StudentFeedbackMessage,name="student_feedback_message"),
+    path('admin/student_contact_message', StudentContactUs,name="student_contact_message"),
+    path('admin/admin_notification_student', NotificationStudent,name="admin_notification_student"),
 
     #Student
-    path('student_home',StudentHome,name="student_home"),
-    path('student_profile',StudentProfile,name="student_profile"),
-    path('about',About,name="about"),
-    path('contact',Contact,name="contact"),
-    path('courseshow',CourseShow,name='courseshow'),
-    path('moduleshow/',ModuleShow,name='moduleshow')
+    path('',StudentHome,name="student_home"),
+    path('student/student_profile',StudentProfile,name="student_profile"),
+    path('student/about',About,name="about"),
+    path('student/contact',Contact,name="contact"),
+    path('student/courseshow',CourseShow,name='courseshow'),
+    path('student/moduleshow/',ModuleShow,name='moduleshow')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

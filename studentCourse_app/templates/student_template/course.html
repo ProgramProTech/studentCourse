@@ -46,6 +46,7 @@ Course
 {% block custom_js %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Fetch courses from API
         fetch('https://studentdjangoapp.azurewebsites.net/api/admin/courses/')
             .then(response => response.json())
             .then(data => {
@@ -87,7 +88,7 @@ Course
                         <div class="col-lg-5 col-md-6 wow zoomIn" data-wow-delay="${(courses.length + 1) * 0.2}s" style="min-height: 350px;">
                             <a class="position-relative d-block h-100 overflow-hidden course-link" href="#" data-course-id="more-courses">
                                 <img class="img-fluid position-absolute w-100 h-100" src="${images[courses.length % images.length]}" alt="" style="object-fit: cover;">
-                                <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin:  1px;">
+                                <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
                                     <h5 class="m-0">More Courses</h5>
                                     <small class="text-primary">${courses.length - 4} More Courses</small>
                                 </div>
@@ -102,22 +103,57 @@ Course
                         event.preventDefault();
                         const courseId = this.getAttribute('data-course-id');
                         
-                        if (courseId !== "more-courses") {
-                            fetch(`https://studentdjangoapp.azurewebsites.net/api/admin/modules?course_id=${courseId}`)
-                                .then(response => response.json())
-                                .then(moduleData => {
-                                    window.location.href = `{% url "moduleshow" %}?course_id=${courseId}`;
-                                })
-                                .catch(error => console.error('Error fetching modules:', error));
-                        } else {
-                            alert("More Courses link clicked. Implement further actions here.");
+                        // Retrieve token from localStorage
+                        const token = localStorage.getItem('token');
+                        
+                        if (!token) {
+                            // No token found, redirect to login page
+                            alert('You must be logged in to view the modules.');
+                            sessionStorage.setItem('redirectAfterLogin', '{% url "moduleshow" %}?course_id=' + courseId);
+                            window.location.href = '{% url "login_page" %}';
+                            return; // Exit function if no token is present
                         }
+                        
+                        // Check if the user is authenticated and a student
+                        $.ajax({
+                            url: 'https://studentdjangoapp.azurewebsites.net/api/auth/user-status/',
+                            type: 'GET',
+                            headers: {
+                                'Authorization': 'Token ' + token
+                            },
+                            success: function(response) {
+                                if (response.is_superuser || response.is_admin) {
+                                    // Redirect to admin page if user is a superuser or admin
+                                    window.location.href = '{% url "admin_home" %}';
+                                } else if (response.is_student) {
+                                    // User is authenticated and is a student
+                                    if (courseId !== 'more-courses') {
+                                        window.location.href = '{% url "moduleshow" %}?course_id=' + courseId;
+                                    } else {
+                                        alert('More Courses link clicked. Implement further actions here.');
+                                    }
+                                } else {
+                                    alert('Please log in as a student to view the modules.');
+                                    sessionStorage.setItem('redirectAfterLogin', '{% url "moduleshow" %}?course_id=' + courseId);
+                                    window.location.href = '{% url "login_page" %}';
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Error fetching user status:', xhr.responseText);
+                                alert('An error occurred while checking user status. Please try again.');
+                            }
+                        });
                     });
                 });
             })
-            .catch(error => console.error('Error fetching courses:', error));
-    });
-    
+            .catch(error => {
+                console.error('Error fetching courses:', error);
+                alert('An error occurred while fetching courses. Please try again.');
+            });
+        });
     </script>
+    {% endblock custom_js %}
     
-{% endblock custom_js %}
+
+
+

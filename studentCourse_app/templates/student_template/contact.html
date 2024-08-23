@@ -108,37 +108,73 @@ Contact
 {% block custom_js %}
 <script>
 $(document).ready(function() {
-    const token = localStorage.getItem('token');
-    $('#contact-form').on('submit', function(e) {
-        e.preventDefault(); // Prevent the default form submission
-
-        // Gather form data
-        var formData = {
-            name: $('#name').val(),
-            email: $('#email').val(),
-            subject: $('#subject').val(),
-            message: $('#message').val()
-        };
-
-        // Send AJAX request
+    // Function to check if the user is a student
+    function checkIfStudent(callback) {
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            alert('You must be logged in to send a message.');
+            callback(false);
+            return;
+        }
+        
         $.ajax({
-            url: 'https://studentdjangoapp.azurewebsites.net/api/contact-messages/',
-            type: 'POST',
+            url: 'https://studentdjangoapp.azurewebsites.net/api/auth/user-status/',
+            type: 'GET',
             headers: {
                 'Authorization': 'Token ' + token
             },
-            contentType: 'application/json',
-            data: JSON.stringify(formData),
             success: function(response) {
-                alert('Message sent successfully!');
-                $('#contact-form')[0].reset();
+                if (response.is_student) {
+                    callback(true);
+                } else {
+                    alert('Only students can send messages.');
+                    callback(false);
+                }
             },
             error: function(xhr, status, error) {
-               
-                alert('An error occurred. Please try again.');
+                console.error('Error fetching user status:', xhr.responseText);
+                alert('An error occurred while checking your status. Please try again.');
+                callback(false);
+            }
+        });
+    }
+
+    $('#contact-form').on('submit', function(e) {
+        e.preventDefault(); // Prevent the default form submission
+        
+        // Check if the user is a student
+        checkIfStudent(function(isStudent) {
+            if (isStudent) {
+                // Gather form data
+                var formData = {
+                    name: $('#name').val(),
+                    email: $('#email').val(),
+                    subject: $('#subject').val(),
+                    message: $('#message').val()
+                };
+                
+                // Send AJAX request
+                $.ajax({
+                    url: 'https://studentdjangoapp.azurewebsites.net/api/contact-messages/',
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Token ' + localStorage.getItem('token')
+                    },
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response) {
+                        alert('Message sent successfully!');
+                        $('#contact-form')[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('An error occurred. Please try again.');
+                    }
+                });
             }
         });
     });
 });
 </script>
 {% endblock custom_js %}
+

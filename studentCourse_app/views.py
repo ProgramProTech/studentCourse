@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view,permission_classes
 from studentCourse_app.serializers import StudentSignupSerializer
 from studentCourse_app.serializers import LoginSerializer
 from studentCourse_app.serializers import AdminStudentSerializer
@@ -15,6 +16,8 @@ from django.http import Http404,HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from .serializers import AdminSerializer, StudentSerializer,FeedBackStudentSerializer,NotificationSerializer,ContactMessageSerializer,RegistrationSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+
+
 class StudentSignupView(APIView):
     def post(self, request, *args, **kwargs):
         serializer = StudentSignupSerializer(data=request.data)
@@ -479,3 +482,15 @@ def check_username_exist(request):
         return HttpResponse(True)
     else:
         return HttpResponse(False)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def user_type_check(request):
+    user = request.user
+    response_data = {
+        "is_superuser": user.is_superuser,
+        "is_admin": user.user_type == "1",  # Assuming user_type 1 is Admin
+        "is_student": user.user_type == "2"  # Assuming user_type 2 is Student
+    }
+    return Response(response_data, status=status.HTTP_200_OK)

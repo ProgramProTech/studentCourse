@@ -59,16 +59,16 @@
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <a href="{% url 'admin_home' %}" class="nav-item nav-link {% if request.path == '/admin_home' %}active{% endif %}">
+                    <a href="{% url 'admin_home' %}" class="nav-item nav-link {% if request.path == '/admin/admin_home' %}active{% endif %}">
                         <i class="fa fa-tachometer-alt me-2"></i> Dashboard
                     </a>
-                    <a href="{% url 'add_student' %}" class="nav-item nav-link {% if request.path == '/add_student' %}active{% endif %}">
+                    <a href="{% url 'add_student' %}" class="nav-item nav-link {% if request.path == '/admin/add_student' %}active{% endif %}">
                         <i class="fa fa-th me-2"></i> Add Student
                     </a>
-                    <a href="{% url 'add_course' %}" class="nav-item nav-link {% if request.path == '/add_course' %}active{% endif %}">
+                    <a href="{% url 'add_course' %}" class="nav-item nav-link {% if request.path == '/admin/add_course' %}active{% endif %}">
                         <i class="fa fa-th me-2"></i> Add Course
                     </a>
-                    <a href="{% url 'add_module' %}" class="nav-item nav-link {% if request.path == '/add_module' %}active{% endif %}">
+                    <a href="{% url 'add_module' %}" class="nav-item nav-link {% if request.path == '/admin/add_module' %}active{% endif %}">
                         <i class="fa fa-th me-2"></i> Add Module
                     </a>
                     <div class="nav-item dropdown">
@@ -76,18 +76,18 @@
                             <i class="fa fa-laptop me-2"></i> Management
                         </a>
                         <div class="dropdown-menu bg-transparent border-0">
-                            <a href="{% url 'manage_student' %}" class="dropdown-item {% if request.path == '/manage_student' %}active{% endif %}">Student</a>
-                            <a href="{% url 'manage_course' %}" class="dropdown-item {% if request.path == '/manage_course' %}active{% endif %}">Course</a>
-                            <a href="{% url 'manage_module' %}" class="dropdown-item {% if request.path == '/manage_module' %}active{% endif %}">Module</a>
+                            <a href="{% url 'manage_student' %}" class="dropdown-item {% if request.path == '/admin/manage_student' %}active{% endif %}">Student</a>
+                            <a href="{% url 'manage_course' %}" class="dropdown-item {% if request.path == '/admin/manage_course' %}active{% endif %}">Course</a>
+                            <a href="{% url 'manage_module' %}" class="dropdown-item {% if request.path == '/admin/manage_module' %}active{% endif %}">Module</a>
                         </div>
                     </div>
-                    <a href="{% url 'student_feedback_message' %}" class="nav-item nav-link {% if request.path == '/student_feedback_message' %}active{% endif %}">
+                    <a href="{% url 'student_feedback_message' %}" class="nav-item nav-link {% if request.path == '/admin/student_feedback_message' %}active{% endif %}">
                         <i class="fa fa-th me-2"></i> Feedback
                     </a>
-                    <a href="{% url 'student_contact_message' %}" class="nav-item nav-link {% if request.path == '/student_contact_message' %}active{% endif %}">
+                    <a href="{% url 'student_contact_message' %}" class="nav-item nav-link {% if request.path == '/admin/student_contact_message' %}active{% endif %}">
                         <i class="fa fa-th me-2"></i> Message
                     </a>
-                    <a href="{% url 'admin_notification_student' %}" class="nav-item nav-link {% if request.path == '/admin_notification_student' %}active{% endif %}">
+                    <a href="{% url 'admin_notification_student' %}" class="nav-item nav-link {% if request.path == '/admin/admin_notification_student' %}active{% endif %}">
                         <i class="fa fa-th me-2"></i> Notification
                     </a>
                 </div>
@@ -246,8 +246,9 @@
                     alert('Failed to fetch profile data: ' + xhr.responseText);
                 }
             });
-        } else {
-            window.location.href="/";
+
+
+            
         }
     
         $('#logoutButton').click(function (e) {

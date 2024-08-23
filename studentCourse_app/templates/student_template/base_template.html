@@ -51,58 +51,60 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
               <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="{% url 'student_home' %}" class="nav-item nav-link {% if request.path == '/student_home' %}active{% endif %}">Home</a>
-                <a href="{% url 'about' %}" class="nav-item nav-link {% if request.path == '/about' %}active{% endif %}">About Us</a>
-                <a href="{% url 'courseshow' %}" class="nav-item nav-link {% if request.path == '/courseshow' %}active{% endif %}">Courses</a>
-                <a href="{% url 'contact' %}" class="nav-item nav-link {% if request.path == '/contact' %}active{% endif %}">Contact Us</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link" id="notificationDropdown" data-bs-toggle="dropdown">
-                        <i class="fa fa-bell" style="font-size: 20px;"></i>
-                        <span id="notificationCount" class="badge bg-danger" style="font-size: 12px;"></span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" style="left: auto; right: 0;" id="notificationMenu">
-                    </ul>
-                </div>
+                {% url 'student_home' as student_home_url %}
+                <a href="{{ student_home_url }}" class="nav-item nav-link {% if request.path == student_home_url %}active{% endif %}">Home</a>
                 
-              </div>
-              <div class="nav-item dropdown">
-                <a href="#" class="nav-link" aria-expanded="false">
-                  <img id="profilePic" src="{% static 'img/user.jpg' %}" alt="Profile Image" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" style="left: auto; right: 0;">
-                    <li><a href="{% url 'student_profile' %}" class="dropdown-item">My Profile</a></li>
-                    <li><a href="#" id="logoutButton" class="dropdown-item">Log Out</a></li>
-                </ul>
-            </div>
-            
-            
-            
-            
+                {% url 'about' as about_url %}
+                <a href="{{ about_url }}" class="nav-item nav-link {% if request.path == about_url %}active{% endif %}">About Us</a>
+                
+                {% url 'courseshow' as courseshow_url %}
+                <a href="{{ courseshow_url }}" class="nav-item nav-link {% if request.path == courseshow_url %}active{% endif %}">Courses</a>
+                
+                {% url 'contact' as contact_url %}
+                <a href="{{ contact_url }}" class="nav-item nav-link {% if request.path == contact_url %}active{% endif %}">Contact Us</a>
+                
+               
+                    <div id="studentNavItems1" class="d-none">
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" id="notificationDropdown" data-bs-toggle="dropdown">
+                                <i class="fa fa-bell" style="font-size: 20px;"></i>
+                                <span id="notificationCount" class="badge bg-danger" style="font-size: 12px;"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" style="left: auto; right: 0;" id="notificationMenu">
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="studentNavItems2" class="d-none">
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" aria-expanded="false">
+                                <img id="profilePic" src="{% static 'img/user.jpg' %}" alt="Profile Image" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0" style="left: auto; right: 0;">
+                                <li><a href="{% url 'student_profile' %}" class="dropdown-item">My Profile</a></li>
+                                <li><a href="#" id="logoutButton" class="dropdown-item">Log Out</a></li>
+                            </ul>
+                        </div>
+                    </div>
+             
           </div>
       </nav>
 
       <div class="content-wrapper">
-   
         {% block main_content %}{% endblock main_content %}
-   
      </div>
 
      <div class="container-fluid bg-dark text-light footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
-    
-      <div class="container">
-          <div class="copyright">
-              <div class="row">
-                  <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                      &copy; <a class="border-bottom" href="#">StudentCourse</a>, All Right Reserved.
-
-                      <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                      Designed By <a class="border-bottom" href="">Group</a><br><br>
-                  </div>
-           
-              </div>
-          </div>
-      </div>
-  </div>
+        <div class="container">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        &copy; <a class="border-bottom" href="#">StudentCourse</a>, All Right Reserved.
+                        Designed By <a class="border-bottom" href="">Group</a><br><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     </div>
         <!-- Back to Top -->
         <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
@@ -123,8 +125,13 @@
         const notificationDropdown = $('#notificationDropdown');
         const notificationMenu = $('#notificationMenu');
         const notificationCount = $('#notificationCount');
-    
+        const redirectAfterLogin = sessionStorage.getItem('redirectAfterLogin');
+        if (redirectAfterLogin) {
+            sessionStorage.removeItem('redirectAfterLogin'); // Clear the item after using it
+            window.location.href = redirectAfterLogin;
+        }
         if (token) {
+            // Fetch user profile data
             $.ajax({
                 url: 'https://studentdjangoapp.azurewebsites.net/api/profile/',
                 type: 'GET',
@@ -135,7 +142,7 @@
                     // Update user information
                     const userInfo = response.data;
                     $('.user-name').text(userInfo.first_name + ' ' + userInfo.last_name);
-    
+
                     // Set profile picture
                     const profilePicUrl = userInfo.profile_pic ? userInfo.profile_pic : '{% static "img/user.jpg" %}';
                     $('#profilePic').attr('src', profilePicUrl);
@@ -144,85 +151,116 @@
                     alert('Failed to fetch profile data: ' + xhr.responseText);
                 }
             });
-        } else {
-            window.location.href="/";
-        }
-    
-        $('#logoutButton').click(function (e) {
-            e.preventDefault();
-    
-            if (token) {
-                $.ajax({
-                    url: 'https://studentdjangoapp.azurewebsites.net/api/logout/',
-                    type: 'POST',
-                    headers: {
-                        'Authorization': 'Token ' + token
-                    },
-                    success: function (response) {
-                        localStorage.removeItem('token');
-                        window.location.href = '{% url "login_page" %}';
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Logout failed: ' + xhr.responseText);
+
+            // Check user status
+            $.ajax({
+                url: 'https://studentdjangoapp.azurewebsites.net/api/auth/user-status/',
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Token ' + token
+                },
+                success: function(response) {
+                    if (response.is_superuser) {
+                        // Redirect to admin page if user is a superuser
+                        window.location.href = '{% url "admin_home" %}';
+                    } else if (response.is_admin) {
+                        // Redirect to admin page if user is an admin
+                        window.location.href = '{% url "admin_home" %}';
+                    } else if (response.is_student) {
+                        // Show student-specific content
+                        $('#studentNavItems1').removeClass('d-none');
+                        $('#studentNavItems2').removeClass('d-none');
+                        fetchNotifications(); // Fetch notifications for student
+                    } else {
+                        // User is logged in but not a student or admin
+                        $('#studentNavItems1').addClass('d-none');
+                        $('#studentNavItems2').addClass('d-none');
                     }
-                });
-            } else {
-                alert('No token found. You are not logged in.');
-            }
-        });
-      
-        function fetchNotifications() {
-            if (token) {
-                $.ajax({
-                    url: 'https://studentdjangoapp.azurewebsites.net/api/notifications/',
-                    type: 'GET',
-                    headers: {
-                        'Authorization': 'Token ' + token
-                    },
-                    success: function (response) {
-                        const notifications = response;
-                        notificationMenu.empty(); // Clear any existing notifications
-                        if (notifications.length > 0) {
-                            notificationCount.text(notifications.length);
-                            notifications.forEach(notification => {
-                                const notificationItem = `
-                                    <li>
-                                        <a href="#" class="dropdown-item">
-                                            ${notification.message}
-                                            <br><small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
-                                        </a>
-                                    </li>
-                                `;
-                                notificationMenu.append(notificationItem);
-                            });
-                        } else {
-                            notificationMenu.append('<li><a href="#" class="dropdown-item">No new notifications</a></li>');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error fetching user type:', xhr.responseText);
+                    // Handle error if user status check fails
+                }
+            });
+
+            // Logout functionality
+            $('#logoutButton').click(function (e) {
+                e.preventDefault();
+
+                if (token) {
+                    $.ajax({
+                        url: 'https://studentdjangoapp.azurewebsites.net/api/logout/',
+                        type: 'POST',
+                        headers: {
+                            'Authorization': 'Token ' + token
+                        },
+                        success: function (response) {
+                            localStorage.removeItem('token');
+                            window.location.href = '{% url "student_home" %}';
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Logout failed: ' + xhr.responseText);
                         }
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Failed to fetch notifications: ' + xhr.responseText);
-                    }
-                });
+                    });
+                } else {
+                    alert('No token found. You are not logged in.');
+                }
+            });
+
+            // Fetch notifications
+            function fetchNotifications() {
+                if (token) {
+                    $.ajax({
+                        url: 'https://studentdjangoapp.azurewebsites.net/api/notifications/',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Token ' + token
+                        },
+                        success: function (response) {
+                            const notifications = response;
+                            notificationMenu.empty(); // Clear any existing notifications
+                            if (notifications.length > 0) {
+                                notificationCount.text(notifications.length);
+                                notifications.forEach(notification => {
+                                    const notificationItem = `
+                                        <li>
+                                            <a href="#" class="dropdown-item">
+                                                ${notification.message}
+                                                <br><small class="text-muted">${new Date(notification.created_at).toLocaleString()}</small>
+                                            </a>
+                                        </li>
+                                    `;
+                                    notificationMenu.append(notificationItem);
+                                });
+                            } else {
+                                notificationMenu.append('<li><a href="#" class="dropdown-item">No new notifications</a></li>');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Failed to fetch notifications: ' + xhr.responseText);
+                        }
+                    });
+                }
             }
-        }
-    
-        // Fetch notifications when the dropdown is shown
-        notificationDropdown.on('show.bs.dropdown', function () {
+
+            // Fetch notifications when the dropdown is shown
+            notificationDropdown.on('show.bs.dropdown', function () {
+                fetchNotifications();
+            });
+
+            // Fetch notifications on page load
             fetchNotifications();
-        });
-    
-        // Fetch notifications on page load
-        fetchNotifications();
-    });
-    
-  </script>
-  
-  {% block custom_js %}{% endblock %}
+        } else {
+            // If not logged in, show login and signup links
+            $('.navbar-nav').append(`
+                <a href="{% url 'login_page' %}" class="nav-item nav-link">Login</a>
+                <a href="{% url 'signup_student' %}" class="nav-item nav-link">Sign Up</a>
+            `);
+            $('#notificationDropdown').hide();
+            $('#profilePic').hide();
+        }
+      });
+    </script>
+    {% block custom_js %}{% endblock %}
 </body>
-
 </html>
-
-
-
-   
-

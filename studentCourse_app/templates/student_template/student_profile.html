@@ -66,7 +66,7 @@ Edit Profile
               <div class="form-group">
                 <label>Profile Picture</label>
                 <input type="file" class="form-control-file" name="profile_pic">
-                <img id="profilePicPreview" src="{% if student.profile_pic %}{{ student.profile_pic }}{% else %}{% static 'img/user.png' %}{% endif %}" alt="Profile Picture" style="margin-top:10px; max-width: 200px;">
+                <img id="profilePicPreview"  alt="Profile Picture" style="margin-top:10px; max-width: 200px;">
               </div>
               <div class="form-group">
                 {% if messages %}
@@ -149,9 +149,10 @@ function fillFormData(data) {
     $('select[name="gender"]').val(data.gender || "");
 
     if (data.profile_pic) {
+      console.log(data.profile_pic,"ddddd")
         $('#profilePicPreview').attr('src', data.profile_pic).show();
     } else {
-        $('#profilePicPreview').attr('src', '{% static "img/user.png" %}').show();
+        $('#profilePicPreview').attr('src', '{% static "img/avatar-1.jpg" %}').show();
     }
 }
 
@@ -194,22 +195,23 @@ function updateProfile(event) {
     }
 
     $.ajax({
-        url: 'https://studentdjangoapp.azurewebsites.net/api/profile/',
-        type: 'PUT',
-        headers: {
-            'Authorization': 'Token ' + token
-        },
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(data) {
-            alert('Profile updated successfully');
-            window.location.reload()
-        },
-        error: function(error) {
-            console.error('Error updating profile:', error);
-        }
-    });
+      url: 'https://studentdjangoapp.azurewebsites.net/api/profile/', // Ensure this is the correct URL for updating the profile
+      type: 'PUT',
+      headers: {
+          'Authorization': 'Token ' + token
+      },
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function(data) {
+          alert('Profile updated successfully');
+          window.location.reload();
+      },
+      error: function(xhr, status, error) {
+          console.error('Error updating profile:', xhr.responseText || error);
+          alert('Failed to update profile. Please check the console for details.');
+      }
+  });
 }
 
 $(document).ready(function() {

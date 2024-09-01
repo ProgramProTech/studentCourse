@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -108,6 +107,20 @@ DATABASES = {
     }
 }
 
+DEFAULT_FILE_STORAGE = 'studentCourse.storageAzure.AzureMediaStorage'
+STATICFILES_STORAGE = 'studentCourse.storageAzure.AzureStaticStorage'
+
+AZURE_ACCOUNT_KEY = "msjAh42tNOvcxIHxD9ot5iKfAWI/YhGzF54tDJmNu/67TaLJL/iZRm1zew7XfbniWLgwQVAAMJcr+AStH5zZQA=="
+AZURE_CUSTOM_DOMAIN = f'storagedjango.blob.core.windows.net'
+
+STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/static/'
+STATIC_ROOT=os.path.join(BASE_DIR,"static")
+
+MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,"media")
+
+AUTH_USER_MODEL = 'studentCourse_app.CustomUser'
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -140,6 +153,7 @@ USE_I18N = True
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -150,19 +164,7 @@ USE_TZ = True
 # MEDIA_URL = '/media/'
 # MEDIA_ROOT = BASE_DIR / 'media'
 
-DEFAULT_FILE_STORAGE = 'studentCourse.storageAzure.AzureMediaStorage'
-STATICFILES_STORAGE = 'studentCourse.storageAzure.AzureStaticStorage'
 
-AZURE_ACCOUNT_KEY = os.getenv('AZURE_ACCOUNT_KEY')
-AZURE_CUSTOM_DOMAIN = f'storagedjango.blob.core.windows.net'
-
-STATIC_URL = f'https://{AZURE_CUSTOM_DOMAIN}/static/'
-STATIC_ROOT=os.path.join(BASE_DIR,"static")
-
-MEDIA_URL = f'https://{AZURE_CUSTOM_DOMAIN}/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR,"media")
-
-AUTH_USER_MODEL = 'studentCourse_app.CustomUser'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

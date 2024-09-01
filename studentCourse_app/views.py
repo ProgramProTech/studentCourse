@@ -157,7 +157,8 @@ class ModuleAPIView(APIView):
     
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser)
+    http_method_names = ['get', 'post']  # Allow only GET and POST methods
+
     def get(self, request, *args, **kwargs):
         user = request.user
         if user.user_type == '1':  # Admin
@@ -179,7 +180,7 @@ class ProfileView(APIView):
 
         return Response({"message": message, "data": serializer.data}, status=status.HTTP_200_OK)
 
-    def put(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         user = request.user
         data = request.data
         profile_pic = request.FILES.get('profile_pic', None)
@@ -213,8 +214,6 @@ class ProfileView(APIView):
                 return Response({"error": "Student profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
         return Response({"error": "Invalid user type."}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 class FeedBackStudentListView(APIView):
     def get(self, request, *args, **kwargs):

@@ -196,7 +196,7 @@ function updateProfile(event) {
 
     $.ajax({
       url: 'https://studentdjangoapp.azurewebsites.net/api/profile/', // Ensure this is the correct URL for updating the profile
-      type: 'PUT',
+      type: 'POST',
       headers: {
           'Authorization': 'Token ' + token
       },

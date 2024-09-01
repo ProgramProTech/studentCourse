@@ -187,17 +187,19 @@ class AdminSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='custom_user.username', read_only=True)
     email = serializers.EmailField(source='custom_user.email', read_only=True)
     password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
     class Meta:
         model = Admin
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
-            'created_at', 'updated_at','password'
+            'created_at', 'updated_at', 'password'
         ]
 
     def update(self, instance, validated_data):
         custom_user_data = validated_data.pop('custom_user', {})
         custom_user = instance.custom_user
 
+        # Update related CustomUser fields
         if 'first_name' in custom_user_data:
             custom_user.first_name = custom_user_data['first_name']
         if 'last_name' in custom_user_data:
@@ -206,26 +208,29 @@ class AdminSerializer(serializers.ModelSerializer):
             custom_user.password = make_password(validated_data['password'])
         custom_user.save()
 
+        # Update Admin fields
         return super().update(instance, validated_data)
-
+    
 class StudentSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='custom_user.first_name')
     last_name = serializers.CharField(source='custom_user.last_name')
     username = serializers.CharField(source='custom_user.username', read_only=True)
     email = serializers.EmailField(source='custom_user.email', read_only=True)
     password = serializers.CharField(write_only=True, required=False, allow_blank=True)
+
     class Meta:
         model = Student
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name',
             'gender', 'profile_pic', 'city', 'country', 
-            'date_of_birth', 'address', 'created_at', 'updated_at','password'
+            'date_of_birth', 'address', 'created_at', 'updated_at', 'password'
         ]
 
     def update(self, instance, validated_data):
         custom_user_data = validated_data.pop('custom_user', {})
         custom_user = instance.custom_user
 
+        # Update related CustomUser fields
         if 'first_name' in custom_user_data:
             custom_user.first_name = custom_user_data['first_name']
         if 'last_name' in custom_user_data:
@@ -234,7 +239,9 @@ class StudentSerializer(serializers.ModelSerializer):
             custom_user.password = make_password(validated_data['password'])
         custom_user.save()
 
+        # Update Student fields
         return super().update(instance, validated_data)
+
     
 
 class FeedBackStudentSerializer(serializers.ModelSerializer):

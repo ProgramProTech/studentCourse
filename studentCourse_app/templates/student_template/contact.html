@@ -108,9 +108,9 @@ Contact
 {% block custom_js %}
 <script>
 $(document).ready(function() {
-    // Function to check if the user is a student
+    const token = localStorage.getItem('token');
     function checkIfStudent(callback) {
-        const token = localStorage.getItem('token');
+       
         
         if (!token) {
             alert('You must be logged in to send a message.');

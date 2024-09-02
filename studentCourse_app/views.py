@@ -157,8 +157,8 @@ class ModuleAPIView(APIView):
     
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post']  # Allow only GET and POST methods
-
+    http_method_names = ['get', 'post']  
+    
     def get(self, request, *args, **kwargs):
         user = request.user
         if user.user_type == '1':  # Admin

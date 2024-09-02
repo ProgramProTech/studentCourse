@@ -69,7 +69,6 @@ def Contact(request):
 def CourseShow(request):
     return render(request, "student_template/course.html") 
 
-from django.shortcuts import render
 
 def ModuleShow(request):
     return render(request, 'student_template/module.html')

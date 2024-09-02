@@ -25,7 +25,6 @@ urlpatterns = [
     path('signup_student',SignupStudent,name="signup_student"),
     path('api/auth/user-status/', user_type_check, name='user-status'),
     
-    path('admin/', admin.site.urls),
     path('api/signup/', StudentSignupView.as_view(), name='student-signup'),
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/logout/', LogoutView.as_view(), name='logout'),

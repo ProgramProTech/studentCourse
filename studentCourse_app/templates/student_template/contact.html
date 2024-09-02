@@ -6,7 +6,7 @@ Contact
 
 {% block main_content %}
 
-  <div class="container-fluid p-0">
+<div class="container-fluid p-0">
     <div class="container-fluid bg-primary py-5 mb-5 page-header">
         <div class="container py-5">
             <div class="row justify-content-center">
@@ -37,7 +37,7 @@ Contact
                         </div>
                         <div class="ms-3">
                             <h5 class="text-primary">Office</h5>
-                            <p class="mb-0">123 Street, New York, USA</p>
+                            <p class="mb-0">123 Baker Street, London, UK</p>
                         </div>
                     </div>
                     <div class="d-flex align-items-center mb-3">
@@ -46,7 +46,7 @@ Contact
                         </div>
                         <div class="ms-3">
                             <h5 class="text-primary">Mobile</h5>
-                            <p class="mb-0">+012 345 67890</p>
+                            <p class="mb-0">+44 123 4567 890</p>
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
@@ -55,16 +55,17 @@ Contact
                         </div>
                         <div class="ms-3">
                             <h5 class="text-primary">Email</h5>
-                            <p class="mb-0">info@example.com</p>
+                            <p class="mb-0">contact@yourcompany.co.uk</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
                     <iframe class="position-relative rounded w-100 h-100"
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3001156.4288297426!2d-78.01371936852176!3d42.72876761954724!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4ccc4bf0f123a5a9%3A0xddcfc6c1de189567!2sNew%20York%2C%20USA!5e0!3m2!1sen!2sbd!4v1603794290143!5m2!1sen!2sbd"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2384.692021544834!2d-0.12775828456519165!3d51.507350380740574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48761b330c1f91b7%3A0x5b237f14dbb0c06!2sLondon%2C%20UK!5e0!3m2!1sen!2sbd!4v1693750838178!5m2!1sen!2sbd"
                         frameborder="0" style="min-height: 300px; border:0;" allowfullscreen="" aria-hidden="false"
                         tabindex="0"></iframe>
                 </div>
+                
                 <div class="col-lg-4 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
                     <form id="contact-form">
                         <div class="row g-3">
@@ -101,7 +102,7 @@ Contact
             </div>
         </div>
     </div>
-  </div>
+</div>
 
 {% endblock main_content %}
 
@@ -110,8 +111,6 @@ Contact
 $(document).ready(function() {
     const token = localStorage.getItem('token');
     function checkIfStudent(callback) {
-       
-        
         if (!token) {
             alert('You must be logged in to send a message.');
             callback(false);
@@ -177,4 +176,3 @@ $(document).ready(function() {
 });
 </script>
 {% endblock custom_js %}
-
